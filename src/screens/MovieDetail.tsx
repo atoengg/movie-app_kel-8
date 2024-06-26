@@ -1,18 +1,21 @@
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { useEffect, useState } from 'react'
-import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ImageBackground, ScrollView, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import MovieList from '../components/movies/MovieList'
 import { API_ACCESS_TOKEN } from '@env'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesome } from '@expo/vector-icons'
+
 import { Movie, MovieListProps } from '../types/app'
 
-export const MovieDetail = ({ route }: any): JSX.Element => {
+export default function MovieDetail({ route }: any): JSX.Element {
   const { id } = route.params
   const [detailMovie, setDetailMovie] = useState<Movie | null>(null)
-  // const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
-  useEffect(() => {
+useEffect(() => {
     getDetailMovie()
+    checkIsFavorite();
   }, [id])
 
   const getDetailMovie = async (): Promise<void> => {
@@ -38,11 +41,56 @@ export const MovieDetail = ({ route }: any): JSX.Element => {
 
   console.log(detailMovie)
 
-  const recomendations: MovieListProps = {
+const recomendations : MovieListProps = {
     title: 'Recomendations',
     path: `/movie/${id}/recommendations`,
     coverType: 'poster',
   }
+
+  const addFavorite = async (movie: Movie): Promise<void> => {
+    try {
+      const initialData: string | null = await AsyncStorage.getItem('@FavoriteList');
+      let favMovieList: Movie[] = initialData ? JSON.parse(initialData) : [];
+      favMovieList = [...favMovieList, movie];
+      await AsyncStorage.setItem('@FavoriteList', JSON.stringify(favMovieList));
+      setIsFavorite(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const removeFavorite = async (id: number): Promise<void> => {
+    try {
+      const initialData: string | null = await AsyncStorage.getItem('@FavoriteList');
+      let favMovieList: Movie[] = initialData ? JSON.parse(initialData) : [];
+      favMovieList = favMovieList.filter((movie) => movie.id !== id);
+      await AsyncStorage.setItem('@FavoriteList', JSON.stringify(favMovieList));
+      setIsFavorite(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const checkIsFavorite = async (): Promise<void> => {
+    try {
+      const initialData: string | null = await AsyncStorage.getItem('@FavoriteList');
+      const favMovieList: Movie[] = initialData ? JSON.parse(initialData) : [];
+      const isFav = favMovieList.some((movie) => movie.id === id);
+      setIsFavorite(isFav);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const toggleFavorite = (): void => {
+    if (detailMovie) {
+      if (isFavorite) {
+        removeFavorite(detailMovie.id);
+      } else {
+        addFavorite(detailMovie);
+      }
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -64,9 +112,9 @@ export const MovieDetail = ({ route }: any): JSX.Element => {
                     <FontAwesome name="star" size={14} color="yellow" />
                     <Text style={styles.rating}>{detailMovie.vote_average.toFixed(1)}</Text>
                   </View>
-                  {/* <TouchableOpacity onPress={toggleFavorite}>
+                  <TouchableOpacity onPress={toggleFavorite}>
                     <FontAwesome name={isFavorite ? "heart" : "heart-o"} size={24} color="red" />
-                  </TouchableOpacity> */}
+                  </TouchableOpacity>
                 </View>
               </LinearGradient>
             </ImageBackground>
