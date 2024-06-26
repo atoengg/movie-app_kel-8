@@ -1,7 +1,7 @@
 import React from 'react'
-import { View, Text, Button, ScrollView, StatusBar, StyleSheet } from 'react-native'
+import { View, ScrollView, StatusBar, StyleSheet } from 'react-native'
 import { MovieListProps } from '../types/app'
-import { MovieList } from '../components/MovieList'
+import MovieList from '../components/movies/MovieList'
 
 const movieLists: MovieListProps[] = [
     {

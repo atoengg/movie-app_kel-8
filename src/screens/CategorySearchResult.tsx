@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { API_ACCESS_TOKEN } from '@env';
-import MovieItem from '../components/movies/MovieItem';
 import { Movie } from '../types/app';
+import MovieItem from '../components/movies/MovieItem';
 
 export default function CategorySearchResult ({ route }: { route: any }): JSX.Element {
     
