@@ -5,7 +5,7 @@ export default function Home({ navigation }: any): JSX.Element {
     return (
         <View>
             <Text>Home</Text>
-            <Button title='Go to movie detail' onPress={() => navigation.navigate('MovieDetail')} />
+            {/* <Button title='Go to movie detail' onPress={() => navigation.navigate('MovieDetail')} /> */}
         </View>
     )
 }
