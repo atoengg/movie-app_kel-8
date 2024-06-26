@@ -1,11 +1,11 @@
 import React from 'react'
-import { Button, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 
-export const MovieDetail = ({navigation} : any) : JSX.Element => {
+export const MovieDetail = ({route} : any) : JSX.Element => {
+  const {id} = route.params
   return (
     <View>
-        <Text>Movie Detail</Text>
-        <Button title='Go Back' onPress={() => navigation.goBack()}/>
+        <Text>Movie ID: {id}</Text>
     </View>
   )
 }
