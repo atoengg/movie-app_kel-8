@@ -1,19 +1,17 @@
-import React, { useState, useEffect } from 'react'
-import { View, Text, ImageBackground, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native'
-import { API_ACCESS_TOKEN } from '@env'
-import MovieList from '../components/movies/MovieList'
-import { FontAwesome } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { MovieListProps, Movie } from '../types/app'
+import React, { useEffect, useState } from 'react'
+import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native'
+import MovieList from '../components/movies/MovieList'
+import { API_ACCESS_TOKEN } from '@env'
+import { FontAwesome } from '@expo/vector-icons'
+import { Movie, MovieListProps } from '../types/app'
 
-
-export default function MovieDetail({ route }: any): JSX.Element {
+export const MovieDetail = ({ route }: any): JSX.Element => {
   const { id } = route.params
   const [detailMovie, setDetailMovie] = useState<Movie | null>(null)
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
-  useEffect(() => {
+useEffect(() => {
     getDetailMovie()
     checkIsFavorite();
   }, [id])
@@ -37,11 +35,11 @@ export default function MovieDetail({ route }: any): JSX.Element {
       .catch((errorResponse) => {
         console.log('Error fetching movie details:', errorResponse)
       })
-    
   }
+
   console.log(detailMovie)
 
-  const recomendations : MovieListProps = {
+const recomendations : MovieListProps = {
     title: 'Recomendations',
     path: `/movie/${id}/recommendations`,
     coverType: 'poster',
@@ -92,76 +90,73 @@ export default function MovieDetail({ route }: any): JSX.Element {
     }
   };
 
-  if (!detailMovie) {
-    return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" />
-      </View>
-    )
-  }
-
   return (
     <ScrollView style={styles.container}>
-      {detailMovie.backdrop_path ? (
-        <ImageBackground
-          source={{ uri: `https://image.tmdb.org/t/p/w500${detailMovie.backdrop_path}` }}
-          style={styles.backdrop}
-        >
-          <LinearGradient
-            colors={['#00000000', 'rgba(0, 0, 0, 0.7)']}
-            locations={[0.6, 0.8]}
-            style={styles.gradientStyle}
-          >
-          <Text style={styles.movieTitle}>{detailMovie.title}</Text>
-          <View style={styles.rowRatingFavoriteContainer}>
-            <View style={styles.ratingContainer}>
-              <FontAwesome name="star" size={14} color="yellow" />
-              <Text style={styles.rating}>{detailMovie.vote_average.toFixed(1)}</Text>
-             
+      {detailMovie ? (
+        <>
+          {detailMovie.backdrop_path ? (
+            <ImageBackground
+              source={{ uri: `https://image.tmdb.org/t/p/w500${detailMovie.backdrop_path}` }}
+              style={styles.backdrop}
+            >
+              <LinearGradient
+                colors={['#00000000', 'rgba(0, 0, 0, 0.7)']}
+                locations={[0.6, 0.8]}
+                style={styles.gradientStyle}
+              >
+                <Text style={styles.movieTitle}>{detailMovie.title}</Text>
+                <View style={styles.rowRatingFavoriteContainer}>
+                  <View style={styles.ratingContainer}>
+                    <FontAwesome name="star" size={14} color="yellow" />
+                    <Text style={styles.rating}>{detailMovie.vote_average.toFixed(1)}</Text>
+                  </View>
+                  <TouchableOpacity onPress={toggleFavorite}>
+                    <FontAwesome name={isFavorite ? "heart" : "heart-o"} size={24} color="red" />
+                  </TouchableOpacity>
+                </View>
+              </LinearGradient>
+            </ImageBackground>
+          ) : (
+            <View style={styles.noImage}>
+              <Text style={styles.noImageText}>No Image Available</Text>
             </View>
-            <TouchableOpacity onPress={toggleFavorite}>
-                <FontAwesome name={isFavorite ? "heart" : "heart-o"} size={24} color="red" />
-            </TouchableOpacity>
+          )}
+
+          <View style={styles.detailsContainer}>
+            <Text style={styles.overview}>{detailMovie.overview}</Text>
+            <View style={styles.infoRow}>
+              <View style={styles.infoColumn}>
+                <Text style={styles.infoLabel}>Original Language</Text>
+                <Text style={styles.infoValue}>{detailMovie.original_language}</Text>
+              </View>
+              <View style={styles.infoColumn}>
+                <Text style={styles.infoLabel}>Popularity</Text>
+                <Text style={styles.infoValue}>{detailMovie.popularity}</Text>
+              </View>
+            </View>
+            <View style={styles.infoRow}>
+              <View style={styles.infoColumn}>
+                <Text style={styles.infoLabel}>Release Date</Text>
+                <Text style={styles.infoValue}>{new Date(detailMovie.release_date).toDateString()}</Text>
+              </View>
+              <View style={styles.infoColumn}>
+                <Text style={styles.infoLabel}>Vote Count</Text>
+                <Text style={styles.infoValue}>{detailMovie.vote_count}</Text>
+              </View>
+            </View>
           </View>
-          
-        </LinearGradient>
-      </ImageBackground>
+          <MovieList
+            title={recomendations.title}
+            path={recomendations.path}
+            coverType={recomendations.coverType}
+            key={recomendations.title}
+          />
+        </>
       ) : (
-        <View style={styles.noImage}>
-          <Text style={styles.noImageText}>No Image Available</Text>
+        <View style={styles.loaderContainer}>
+          <Text>Loading...</Text>
         </View>
       )}
-     
-      <View style={styles.detailsContainer}>
-        <Text style={styles.overview}>{detailMovie.overview}</Text>
-        <View style={styles.infoRow}>
-          <View style={styles.infoColumn}>
-            <Text style={styles.infoLabel}>Original Language</Text>
-            <Text style={styles.infoValue}>{detailMovie.original_language}</Text>
-          </View>
-          <View style={styles.infoColumn}>
-            <Text style={styles.infoLabel}>Popularity</Text>
-            <Text style={styles.infoValue}>{detailMovie.popularity}</Text>
-          </View>
-        </View>
-        <View style={styles.infoRow}>
-          <View style={styles.infoColumn}>
-            <Text style={styles.infoLabel}>Release Date</Text>
-            <Text style={styles.infoValue}>{new Date(detailMovie.release_date).toDateString()}</Text>
-          </View>
-          <View style={styles.infoColumn}>
-            <Text style={styles.infoLabel}>Vote Count</Text>
-            <Text style={styles.infoValue}>{detailMovie.vote_count}</Text>
-          </View>
-        </View>
-      </View>
-      {/* Add Recommendations here */}
-      <MovieList
-          title={recomendations.title}
-          path={recomendations.path}
-          coverType={recomendations.coverType}
-          key={recomendations.title}
-      />
     </ScrollView>
   )
 }
