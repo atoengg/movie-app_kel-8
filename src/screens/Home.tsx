@@ -5,27 +5,27 @@ import { MovieList } from '../components/MovieList'
 
 const movieLists: MovieListProps[] = [
     {
-      title: 'Now Playing in Theater',
-      path: 'movie/now_playing?language=en-US&page=1',
-      coverType: 'backdrop',
+        title: 'Now Playing in Theater',
+        path: 'movie/now_playing?language=en-US&page=1',
+        coverType: 'backdrop',
     },
     {
-      title: 'Upcoming Movies',
-      path: 'movie/upcoming?language=en-US&page=1',
-      coverType: 'poster',
+        title: 'Upcoming Movies',
+        path: 'movie/upcoming?language=en-US&page=1',
+        coverType: 'poster',
     },
     {
-      title: 'Top Rated Movies',
-      path: 'movie/top_rated?language=en-US&page=1',
-      coverType: 'poster',
+        title: 'Top Rated Movies',
+        path: 'movie/top_rated?language=en-US&page=1',
+        coverType: 'poster',
     },
     {
-      title: 'Popular Movies',
-      path: 'movie/popular?language=en-US&page=1',
-      coverType: 'poster',
+        title: 'Popular Movies',
+        path: 'movie/popular?language=en-US&page=1',
+        coverType: 'poster',
     },
-  ]
-  
+]
+
 
 export default function Home(): JSX.Element {
     return (
@@ -33,10 +33,14 @@ export default function Home(): JSX.Element {
             <View style={styles.container}>
                 {
                     movieLists.map((movieList) => (
-                        <MovieList title={movieList.title} path={movieList.path} coverType={movieList.coverType} key={movieList.title}/>
+                        <MovieList
+                            title={movieList.title}
+                            path={movieList.path}
+                            coverType={movieList.coverType}
+                            key={movieList.title} />
                     ))
                 }
-                <StatusBar translucent={false}/>
+                {/* <StatusBar translucent={false}/> */}
             </View>
         </ScrollView>
     )
@@ -44,9 +48,9 @@ export default function Home(): JSX.Element {
 
 const styles = StyleSheet.create({
     container: {
-      marginTop: StatusBar.currentHeight ?? 32,
-      alignItems: 'center',
-      justifyContent: 'center',
-      rowGap: 16,
+        marginTop: StatusBar.currentHeight ?? 32,
+        alignItems: 'center',
+        justifyContent: 'center',
+        rowGap: 16,
     },
-  })
+})
