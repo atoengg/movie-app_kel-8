@@ -1,12 +1,14 @@
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { useEffect, useState } from 'react'
-import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ImageBackground, ScrollView, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import MovieList from '../components/movies/MovieList'
 import { API_ACCESS_TOKEN } from '@env'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesome } from '@expo/vector-icons'
+
 import { Movie, MovieListProps } from '../types/app'
 
-export const MovieDetail = ({ route }: any): JSX.Element => {
+export default function MovieDetail({ route }: any): JSX.Element {
   const { id } = route.params
   const [detailMovie, setDetailMovie] = useState<Movie | null>(null)
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
